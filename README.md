@@ -9,8 +9,8 @@ Two clips of the same ball and view:
 | 1 | `data/input.mp4` | 848x478, 47.7 | to ~10 % of the ball height (book lifted at up to 0.2 m/s) | model fitting |
 | 2 | `data/input2.mp4` | 1256x804, 49.2 | to 37 % of the height (slow press, book lifted at up to 0.24 m/s) | held-out test, **not fitted** |
 
-**Short version of the result.** The 3D simulation follows the ball height during press and release on clip 1 (1.9 mm mean error). Applied unchanged to clip 2 it does
-**not** predict the deep squash or the recovery well (height RMSE 4-6 mm). The recovery speed differs between the two clips and two clips cannot say why.
+**Short version of the result.** The 3D simulation follows the ball height during press and release on clip 1 (height error about 2 mm; 1.9-2.6 mm depending on the time window, see Results). Applied unchanged to clip 2 it does
+**not** predict the deep squash or the recovery well (height RMSE about 8 mm during the press and 5 mm after release). The recovery speed differs between the two clips and two clips cannot say why.
 Stiffness is not identified (no force data). Details, and everything that does not work, are below.
 
 ## Results at a glance (`results/`)
@@ -32,19 +32,15 @@ Everything a reviewer needs to look at is in `results/` (committed); `outputs/` 
 
 **Clip 1 (the clip the model was fitted on)**
 
-![demo clip 1](results/demo_clip1.gif)
-
+https://github.com/user-attachments/assets/d98595d6-98d8-40d1-9a3d-6c2df2b7c828
 **Clip 2 (held out, same parameters, nothing refitted)**
 
-![demo clip 2](results/demo_clip2.gif)
+https://github.com/user-attachments/assets/d2d9f06d-e148-4cfa-b1bc-2f907852acbb
 
-**Clip 1, every model tried next to the real clip**
+https://github.com/user-attachments/assets/41b8904a-40de-4c2a-a2a0-95c37896de61
 
-![models compared](results/models_compare.gif)
 
-(GIFs are previews; the full-quality mp4s are linked in the table below.)
-
-Click a video name to play it on GitHub. The main figures, inline:
+The main figures, inline:
 
 **Clip 1, all models and baselines (height, width, volume ratio)**
 
@@ -73,6 +69,8 @@ for v in demo_clip1 demo_clip2 models_compare; do ffmpeg -y -v error -i results/
 cp outputs/clip1/band.png results/band.png; cp outputs/clip1/baseline_1dof.png results/baseline_1dof.png
 ```
 (`render_3d.py` also takes `WOBBLE=1` to overlay the fitted post-release sway as a labelled add-on layer; the demos above do not use it.)
+
+**Quick check (about 2 minutes, no simulation):** `pip install -r requirements.txt`, then `python extract_targets.py` and `python lumped.py` reproduce the measurements and the 1-DOF baseline. The 3D runs take 15-20 minutes each. Tested with Python 3.9.6, Taichi 1.7.3, macOS (Apple silicon), CPU only.
 
 ## Files (flat folder, run from here)
 
@@ -164,8 +162,6 @@ What the video did **not** identify: absolute stiffness (the silhouette is the s
 | mass-spring | 24 | 52 | | collapses (volume ratio ~0.05); dropped from the comparison |
 | ARX black box (trained on the press only) | 9.0 | 20.6 | | cannot predict a release it never saw |
 
-https://github.com/user-attachments/assets/d98595d6-98d8-40d1-9a3d-6c2df2b7c828
-
 MPM, FEM and XPBD agree with each other to ~1-2 mm and all spread sideways ~7-9 mm more than the video shows (see Limitations). MuJoCo flex was tried on the same mesh (`extras/`): at deep squash it produced >1000 inverted tets
 and seconds of simulated time took hours, so it was not completed. PyBullet deformable was only smoke-tested. Neither is in the table.
 
@@ -180,17 +176,16 @@ and seconds of simulated time took hours, so it was not completed. PyBullet defo
 | width at deep squash, sim - measured | +5.9 mm | +6.6 mm |
 | lumped model, tau = 0.114 s frozen from clip 1 (release RMSE) | 3.96 mm | |
 
-https://github.com/user-attachments/assets/d2d9f06d-e148-4cfa-b1bc-2f907852acbb
-
 Both runs cover 8-19 s with the same parameters; the book's 1-3 mm tilt makes no meaningful difference. (An earlier flat run that stopped at ~17.4 s scored differently only because it covered a shorter window.)
-
-https://github.com/user-attachments/assets/41b8904a-40de-4c2a-a2a0-95c37896de61
 
 Where the error comes from (checked against the book height, tilted run; the flat run is nearly identical): the simulated ball **lags the book during the slow press** -- 1.9 mm above the book at 11.5 s, 7.3 mm at 13.0 s (a plateau at ~39.8 mm
 while the book keeps lowering), 3.8 mm at 14.0 s, and only ~1 mm from 15.9 s on. A separate test (book lowered to 27.5 mm in 1.5 s and held, no video) leaves the sim ball 0.9 mm above the book, the same offset as on clip 1,
 so the grid contact gap itself is fine; the lag is a *transient* problem. The contact is enforced on grid velocities only (no position correction), so material that ends up above the book is not pushed back, which fits the plateau
-but was not proven. 
-**Tried and rejected:** an optional particle-level projection (`run_3d.py --project`) removes most of the lag at the press (spot test: sim within 0.8 mm of the book) but breaks recovery. Full runs: clip 1 press 2.41 mm / release 7.70 mm, ball stalls at 54.6 mm vs 66.8 mm measured 1 s after the minimum; clip 2 press 6.67 mm (was 7.89) / release 10.73 mm (was 4.89), stalls at 52.9 mm vs 65.5 mm. I tested one explanation: that the jump leaves F inconsistent. `--proj_k` also compresses F in proportion to the jump (clip-1 press and release, 6.2-8.6 s): with k=1 the ball ends at 18.7 mm and with k=3 at 29.2 mm, against ~67 mm measured, and without the compression it stalled at 54.6 mm. So that explanation is wrong, and compressing F made recovery worse. Projection simply removes volume from a ball that is already near the squashed limit, and I did not find a version that keeps recovery. It stays off by default; the numbers in the tables above use the grid-only contact. The "deepest squash" row in the table (31.7 / 32.2 mm vs 25.5 mm) is also inflated by two things: the measured ball height is ~2 mm below the (tilted) book's lowest point, and the sim's minimum
+but was not proven.
+
+**Tried and rejected:** an optional particle-level projection (`run_3d.py --project`) removes most of the lag at the press (spot test: sim within 0.8 mm of the book) but breaks recovery. Full runs: clip 1 press 2.41 mm / release 7.70 mm, ball stalls at 54.6 mm vs 66.8 mm measured 1 s after the minimum; clip 2 press 6.67 mm (was 7.89) / release 10.73 mm (was 4.89), stalls at 52.9 mm vs 65.5 mm. I tested one explanation: that the jump leaves F inconsistent. `--proj_k` also compresses F in proportion to the jump (clip-1 press and release, 6.2-8.6 s): with k=1 the ball ends at 18.7 mm and with k=3 at 29.2 mm, against ~67 mm measured, and without the compression it stalled at 54.6 mm. So that explanation is wrong, and compressing F made recovery worse. Projection simply removes volume from a ball that is already near the squashed limit, and I did not find a version that keeps recovery. It stays off by default; the numbers in the tables above use the grid-only contact.
+
+The "deepest squash" row in the table (31.7 / 32.2 mm vs 25.5 mm) is also inflated by two things: the measured ball height is ~2 mm below the (tilted) book's lowest point, and the sim's minimum
 is not at the same instant as the measured one. The sim also **recovers too fast** (measured 57.8 mm at +0.7 s; both sims are at 68 mm). Using the measured tilt changed nothing, so the 1-3 mm tilt is not the explanation. The clip-2 numbers were looked at before the 3D test was run; no parameter was changed in response.
 
 **Recovery laws across the two clips** (`lumped.py cross`, release RMSE in mm; the number after the arrow is on the held-out clip):
@@ -272,4 +267,4 @@ The MPM does not produce it. `extras/sway_model.py` fits it and `WOBBLE=1 python
 
 Taichi (https://taichi-lang.org) for the solver; OpenCV, NumPy, SciPy, Matplotlib; ffmpeg for video encoding. MLS-MPM/APIC follows Hu et al. 2018. MuJoCo and PyBullet were tried as third-party baselines (see above).
 Related work read for context (abstract level): PhysTwin, Spring-Gaus, PhysGaussian, GIC, PAC-NeRF, MonoPhysics, EMPM.
-Code and analysis were developed with substantial help from Claude (Anthropic) in an interactive session; the videos, the runs on the author's machine, and the choice of what to test are the author's.
+Code was developed with the help of Claude, the videos, the runs machine, and the choice of testing and experiments are the author's.
