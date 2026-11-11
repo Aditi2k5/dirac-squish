@@ -33,6 +33,7 @@ Everything a reviewer needs to look at is in `results/` (committed); `outputs/` 
 **Clip 1 (the clip the model was fitted on)**
 
 https://github.com/user-attachments/assets/d98595d6-98d8-40d1-9a3d-6c2df2b7c828
+
 **Clip 2 (held out, same parameters, nothing refitted)**
 
 https://github.com/user-attachments/assets/d2d9f06d-e148-4cfa-b1bc-2f907852acbb
