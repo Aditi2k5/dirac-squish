@@ -28,6 +28,22 @@ Everything a reviewer needs to look at is in `results/` (committed); `outputs/` 
 | [`results/baseline_1dof.png`](results/baseline_1dof.png) | the 1-DOF baseline and what a single clip can identify |
 | [`results/dots_tracking.png`](results/dots_tracking.png) | tracking of the dots printed on the ball after release (a cross-check on the silhouette; feeds the post-release section) |
 
+### Demo (real video | simulated ball | simulated ball from above)
+
+**Clip 1 (the clip the model was fitted on)**
+
+![demo clip 1](results/demo_clip1.gif)
+
+**Clip 2 (held out, same parameters, nothing refitted)**
+
+![demo clip 2](results/demo_clip2.gif)
+
+**Clip 1, every model tried next to the real clip**
+
+![models compared](results/models_compare.gif)
+
+(GIFs are previews; the full-quality mp4s are linked in the table below.)
+
 Click a video name to play it on GitHub. The main figures, inline:
 
 **Clip 1, all models and baselines (height, width, volume ratio)**
@@ -53,6 +69,7 @@ VIDEO=data/input2.mp4 TARGETS=outputs/clip2/targets.npz CROP=295,995,263,733 pyt
 python render_compare.py results/models_compare --skip=ms
 python extras/track_dots.py --out results/dots_tracking
 cp outputs/models/compare.png results/compare.png; cp outputs/clip2/heldout.png results/heldout_clip2.png
+for v in demo_clip1 demo_clip2 models_compare; do ffmpeg -y -v error -i results/$v.mp4 -vf "fps=8,scale=800:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" results/$v.gif; done   # GIF previews shown above
 cp outputs/clip1/band.png results/band.png; cp outputs/clip1/baseline_1dof.png results/baseline_1dof.png
 ```
 (`render_3d.py` also takes `WOBBLE=1` to overlay the fitted post-release sway as a labelled add-on layer; the demos above do not use it.)
