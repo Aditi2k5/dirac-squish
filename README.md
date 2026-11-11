@@ -164,6 +164,8 @@ What the video did **not** identify: absolute stiffness (the silhouette is the s
 | mass-spring | 24 | 52 | | collapses (volume ratio ~0.05); dropped from the comparison |
 | ARX black box (trained on the press only) | 9.0 | 20.6 | | cannot predict a release it never saw |
 
+https://github.com/user-attachments/assets/d98595d6-98d8-40d1-9a3d-6c2df2b7c828
+
 MPM, FEM and XPBD agree with each other to ~1-2 mm and all spread sideways ~7-9 mm more than the video shows (see Limitations). MuJoCo flex was tried on the same mesh (`extras/`): at deep squash it produced >1000 inverted tets
 and seconds of simulated time took hours, so it was not completed. PyBullet deformable was only smoke-tested. Neither is in the table.
 
@@ -178,12 +180,17 @@ and seconds of simulated time took hours, so it was not completed. PyBullet defo
 | width at deep squash, sim - measured | +5.9 mm | +6.6 mm |
 | lumped model, tau = 0.114 s frozen from clip 1 (release RMSE) | 3.96 mm | |
 
+https://github.com/user-attachments/assets/d2d9f06d-e148-4cfa-b1bc-2f907852acbb
+
 Both runs cover 8-19 s with the same parameters; the book's 1-3 mm tilt makes no meaningful difference. (An earlier flat run that stopped at ~17.4 s scored differently only because it covered a shorter window.)
+
+https://github.com/user-attachments/assets/41b8904a-40de-4c2a-a2a0-95c37896de61
 
 Where the error comes from (checked against the book height, tilted run; the flat run is nearly identical): the simulated ball **lags the book during the slow press** -- 1.9 mm above the book at 11.5 s, 7.3 mm at 13.0 s (a plateau at ~39.8 mm
 while the book keeps lowering), 3.8 mm at 14.0 s, and only ~1 mm from 15.9 s on. A separate test (book lowered to 27.5 mm in 1.5 s and held, no video) leaves the sim ball 0.9 mm above the book, the same offset as on clip 1,
 so the grid contact gap itself is fine; the lag is a *transient* problem. The contact is enforced on grid velocities only (no position correction), so material that ends up above the book is not pushed back, which fits the plateau
-but was not proven. **Tried and rejected:** an optional particle-level projection (`run_3d.py --project`) removes most of the lag at the press (spot test: sim within 0.8 mm of the book) but breaks recovery. Full runs: clip 1 press 2.41 mm / release 7.70 mm, ball stalls at 54.6 mm vs 66.8 mm measured 1 s after the minimum; clip 2 press 6.67 mm (was 7.89) / release 10.73 mm (was 4.89), stalls at 52.9 mm vs 65.5 mm. I tested one explanation: that the jump leaves F inconsistent. `--proj_k` also compresses F in proportion to the jump (clip-1 press and release, 6.2-8.6 s): with k=1 the ball ends at 18.7 mm and with k=3 at 29.2 mm, against ~67 mm measured, and without the compression it stalled at 54.6 mm. So that explanation is wrong, and compressing F made recovery worse. Projection simply removes volume from a ball that is already near the squashed limit, and I did not find a version that keeps recovery. It stays off by default; the numbers in the tables above use the grid-only contact. The "deepest squash" row in the table (31.7 / 32.2 mm vs 25.5 mm) is also inflated by two things: the measured ball height is ~2 mm below the (tilted) book's lowest point, and the sim's minimum
+but was not proven. 
+**Tried and rejected:** an optional particle-level projection (`run_3d.py --project`) removes most of the lag at the press (spot test: sim within 0.8 mm of the book) but breaks recovery. Full runs: clip 1 press 2.41 mm / release 7.70 mm, ball stalls at 54.6 mm vs 66.8 mm measured 1 s after the minimum; clip 2 press 6.67 mm (was 7.89) / release 10.73 mm (was 4.89), stalls at 52.9 mm vs 65.5 mm. I tested one explanation: that the jump leaves F inconsistent. `--proj_k` also compresses F in proportion to the jump (clip-1 press and release, 6.2-8.6 s): with k=1 the ball ends at 18.7 mm and with k=3 at 29.2 mm, against ~67 mm measured, and without the compression it stalled at 54.6 mm. So that explanation is wrong, and compressing F made recovery worse. Projection simply removes volume from a ball that is already near the squashed limit, and I did not find a version that keeps recovery. It stays off by default; the numbers in the tables above use the grid-only contact. The "deepest squash" row in the table (31.7 / 32.2 mm vs 25.5 mm) is also inflated by two things: the measured ball height is ~2 mm below the (tilted) book's lowest point, and the sim's minimum
 is not at the same instant as the measured one. The sim also **recovers too fast** (measured 57.8 mm at +0.7 s; both sims are at 68 mm). Using the measured tilt changed nothing, so the 1-3 mm tilt is not the explanation. The clip-2 numbers were looked at before the 3D test was run; no parameter was changed in response.
 
 **Recovery laws across the two clips** (`lumped.py cross`, release RMSE in mm; the number after the arrow is on the held-out clip):
