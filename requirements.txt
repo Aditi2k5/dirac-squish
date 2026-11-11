@@ -2,4 +2,4 @@ numpy
 scipy
 matplotlib
 opencv-python
-taichi
+taichi==1.7.3
