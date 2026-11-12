@@ -1,14 +1,3 @@
-"""Step 6 - track the black dots printed on the ball after release and extract the shape wobble.
-
-Why dots: the silhouette (width/area) can be biased by lighting/exposure. Dots are tracked points ON the ball,
-so their mutual distances measure surface strain independent of the mask colour thresholds.
-
-Window: from t0 (book gone, default 8.3 s) to t1 (default 10.5 s). Dots are detected as small dark blobs inside the
-yellow silhouette and linked frame to frame by nearest neighbour. Writes outputs/sway/dots.npz and outputs/sway/dots.png.
-Signals (all relative to the median of the final 0.5 s = rest):
-  span   = mean distance of tracked dots from their centroid (a size/shape measure that ignores rotation about the view axis)
-  width  = silhouette width (from targets.npz) for comparison
-"""
 import os; [os.makedirs(d, exist_ok=True) for d in ('outputs/clip1', 'outputs/clip2', 'outputs/models', 'outputs/sway')]   # output folders
 import argparse
 import cv2

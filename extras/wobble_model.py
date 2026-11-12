@@ -1,13 +1,3 @@
-"""Step 8 - lumped model that accounts for the slow shape wobble after release.
-
-  height  : H' = (H0 - H)/tau  with unilateral contact against the book (as in baseline_1dof.py), tau fixed at 0.1 s
-  width   : (W - W0) = a shape mode q, kicked by the recovery velocity of the height (hold state = rest, as measured):
-               q'' + 2 zeta w q' + w^2 q = -b dH/dt ,   W = W0 + q
-            i.e. when the ball springs back quickly the width is thrown off and rings down, like a jelly.
-Free parameters: b (mm per mm/s... units 1/s), f = w/2pi (Hz), zeta. They are fitted to the measured width AFTER the book has left (t >= 7.9 s).
-This is a DESCRIPTIVE model of the wobble, not a derived material law (see README: elastic foam would ring far faster).
-Writes outputs/sway/wobble_model.png and outputs/sway/wobble_model.json. Prediction for a new, faster release is panel (c).
-"""
 import os; [os.makedirs(d, exist_ok=True) for d in ('outputs/clip1', 'outputs/clip2', 'outputs/models', 'outputs/sway')]   # output folders
 import json
 import numpy as np

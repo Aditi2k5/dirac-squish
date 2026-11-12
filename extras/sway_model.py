@@ -1,9 +1,3 @@
-"""Step 9 - the ball's post-release motion is mainly a small SIDEWAYS SWAY of the whole ball, not a change of diameter.
-Measured here from the yellow mask (mid-height band of rows) after the book has left: left/right edge move together; centroid x
-oscillates; edge-to-edge width changes only ~1-2 mm. A background strip (table texture) is steady to <0.1 mm, so it is not camera shake.
-Fits a damped oscillation  x(t) = A exp(-(t-t0)/tau) cos(2 pi f (t-t0) + phi) + c  to centroid x (t >= 8.3 s) and
-writes outputs/sway/sway_fit.json and outputs/sway/sway.npz (measured + fitted curves) and outputs/sway/sway.png. DESCRIPTIVE only.
-"""
 import os; [os.makedirs(d, exist_ok=True) for d in ('outputs/clip1', 'outputs/clip2', 'outputs/models', 'outputs/sway')]   # output folders
 import json, cv2, numpy as np
 from scipy.optimize import least_squares

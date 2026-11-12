@@ -1,6 +1,3 @@
-"""Third-party library baseline #2: PyBullet deformable world (Neo-Hookean tetrahedral FEM, Bullet's own solver and collision), on the SAME mesh,
-driven by the measured book height (a kinematic box moved every step). No physics code of ours.  SI units (m, kg, s), z up.
-rho = 100 kg/m^3, E = 8*100 Pa (E/rho = 8 m^2/s^2).  Output format as mesh_models.py -> outputs/mesh_pybullet_h4.5.npz"""
 import argparse, time, tempfile, os
 import numpy as np
 import pybullet as p

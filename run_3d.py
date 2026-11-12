@@ -1,8 +1,3 @@
-"""Step 3 - 3D simulation: a foam SPHERE is pressed and released by the plate path measured from the video.
-Outputs outputs/clip<N>/sim3d_alpha<A>.npz (named by the damping, so runs never overwrite each other; override with --out) (observables + particle snapshots for rendering).
-Material (3D MPM, fixed-corotated elasticity, Coulomb friction, Rayleigh damping) - see README for what is/isn't identified.
-Runtime: ~40 ms per step on 2 CPU cores at dx=3 mm (50k particles); use MPM_ARCH=gpu (CUDA/Metal) for speed.
-"""
 import os; [os.makedirs(d, exist_ok=True) for d in ('outputs/clip1', 'outputs/clip2', 'outputs/models', 'outputs/sway')]   # output folders
 import argparse, time
 import numpy as np

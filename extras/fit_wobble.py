@@ -1,5 +1,3 @@
-"""Step 7 - fit a damped oscillation x(t)=A exp(-(t-t0)/tau) cos(2 pi f (t-t0) + phi) + c to the post-release wobble.
-Reads outputs/sway/dots.npz (from track_dots.py). Prints frequency, decay time, damping ratio per signal (mode)."""
 import os; [os.makedirs(d, exist_ok=True) for d in ('outputs/clip1', 'outputs/clip2', 'outputs/models', 'outputs/sway')]   # output folders
 import numpy as np
 from scipy.optimize import least_squares

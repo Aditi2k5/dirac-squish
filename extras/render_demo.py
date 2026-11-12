@@ -1,8 +1,3 @@
-"""Step 4 - demo video: real clip (left) next to the simulated 3D ball seen from the same side view (right).
-Needs outputs/sim3d.npz (from run_3d.py) and outputs/clip1/targets.npz. Writes outputs/demo.mp4.
-The simulated particles are orthographically projected (x, y) and drawn at the video's pixel scale;
-the book is drawn from the MEASURED plate height (it is the simulation's input, not a prediction).
-"""
 import os; [os.makedirs(d, exist_ok=True) for d in ('outputs/clip1', 'outputs/clip2', 'outputs/models', 'outputs/sway')]   # output folders
 import subprocess, sys, shutil
 import cv2

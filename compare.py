@@ -1,21 +1,3 @@
-"""Step 11 - compare approaches on the SAME input (measured book height, 68.7 mm ball) and the SAME observables.
-
-Approaches (each a different answer to 'how do you represent the ball?'):
-  proxy    geometric proxy: lumped 1-DOF recovery (tau=0.1 s) for the height + a power law W/W0 = (H/H0)^-q for the width (spheroid H x W x W)
-  arx      learned black box: ridge-regressed linear ARX model from book-height history to ball height (shows what data-driven can/cannot do from one clip)
-  mpm      MLS-MPM 3D (outputs/clip1/sim3d_alpha100_long.npz)
-  fem/ms/xpbd   mesh models from mesh_models.py (outputs/models/mesh_<model>_h4.5.npz)
-Scores (window 5.0-8.8 s unless noted):
-  H_rmse   height RMSE vs measured (mm)           - press + release
-  H_rel    height RMSE only after the book has left (t >= 8.1 s) = recovery quality
-  W_deep   mean (sim width - measured width) while pressed deep (6.0-7.3 s)  - sideways spread (see README: measured width is suspect)
-  Jmin     smallest volume ratio reached (does the model compress, or conserve volume?)
-  inverted max number of inverted tets (mesh failure)
-  wall_s   run time
-Held-out mode:  python compare.py heldout [sim.npz] [targets.npz] [out.png]  scores a FROZEN 3D sim against another clip (press / release RMSE, height at fixed times after the minimum, width at deep squash; times past the end of the sim are reported n/a).
-Band mode:  python compare.py band targets.npz sim1.npz sim2.npz ...  overlays several runs (e.g. different --alpha / --gap), prints each run's height RMSE and the min-max spread, writes band.png next to the first sim.
-Writes outputs/models/compare.png, outputs/models/compare.csv and prints the table.
-"""
 import os; [os.makedirs(d, exist_ok=True) for d in ('outputs/clip1', 'outputs/clip2', 'outputs/models', 'outputs/sway')]   # output folders
 import os, sys, csv
 import numpy as np

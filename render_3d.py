@@ -1,4 +1,4 @@
-"""Step 10 - 3D view of the simulation: real clip | shaded simulated ball from an elevated angle | same ball seen from above.
+"""3D view of the simulation: real clip | shaded simulated ball from an elevated angle | same ball seen from above.
 Usage:  [WOBBLE=1] [TILT=1] [VIDEO=data/input2.mp4 TARGETS=outputs/clip2/targets.npz CROP=x0,x1,y0,y1] python render_3d.py [sim_file.npz] [out_basename]
  - the ball surface is the convex hull of the simulated particles, shaded by face normal (the squashed ball is convex)
  - the book is drawn (translucent) at its MEASURED height while it is in frame; the table has a grid and a ring marking the ball's rest footprint

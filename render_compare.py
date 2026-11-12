@@ -1,8 +1,4 @@
-"""ONE video comparing the approaches: real clip + every available model (oblique shaded 3D view, same camera, same time).
-Usage: python render_compare.py [out_basename] [--skip=ms,pybullet]      (default outputs/models/compare_demo; keys: mpm fem xpbd ms mujoco pybullet)
-Uses whichever of these exist:  outputs/clip1/sim3d_alpha100_long.npz (MPM), mesh_fem_h4.5.npz, mesh_xpbd_h4.5.npz, mesh_ms_h4.5.npz, mesh_mujoco_h4.5.npz, mesh_pybullet_h4.5.npz
-Each tile shows the model name and its current ball height H next to the measured height; the faint outline is the book at its measured height.
-No sway layer here: these are the raw models. Needs data/input.mp4 and outputs/clip1/targets.npz (or VIDEO / TARGETS / CROP env variables, as in render_3d.py); ffmpeg optional (else the _raw.mp4 is written)."""
+"""One video comparing the approaches: real clip + every available model (oblique shaded 3D view, same camera, same time)."""
 import os; [os.makedirs(d, exist_ok=True) for d in ('outputs/clip1', 'outputs/clip2', 'outputs/models', 'outputs/sway')]   # output folders
 import os, sys, shutil, subprocess
 import cv2

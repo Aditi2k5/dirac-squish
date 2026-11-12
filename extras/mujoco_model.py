@@ -1,7 +1,3 @@
-"""Third-party library baseline: MuJoCo flex (linear-elastic FEM soft body) on the SAME tetrahedral mesh, driven by the measured book height.
-No physics code of ours: we only build the XML (mesh from mesh_models.build), move a mocap box with the measured book height, and read the vertices.
-MuJoCo is SI: metres, kg, s. Density 100 kg/m^3, E = 8 * 100 Pa so E/rho = 8 m^2/s^2 (same as the other models).
-Output in the same npz format as mesh_models.py (outputs/mesh_mujoco_h4.5.npz)."""
 import argparse, time, re
 import numpy as np
 import mujoco

@@ -1,11 +1,9 @@
-"""Step 1 - measure the video.
-
+"""
 Reads the press/release clip and writes outputs/clip1/targets.npz with, per frame:
   plate_mm      height of the book's underside above the table (NaN when the book is not in frame)
   ball_height_mm height of the ball (ball top is the book underside while they touch)
   width_mm, area_mm2   visible silhouette of the ball (yellow mask, below the book)
 Scale: the ball's rest width in pixels is matched to its measured diameter.
-NOTE: pass --circ_in if you measured the CIRCUMFERENCE with a tape (diameter = circ / pi), or --diam_mm for a diameter.
 """
 import os; [os.makedirs(d, exist_ok=True) for d in ('outputs/clip1', 'outputs/clip2', 'outputs/models', 'outputs/sway')]   # output folders
 import argparse
